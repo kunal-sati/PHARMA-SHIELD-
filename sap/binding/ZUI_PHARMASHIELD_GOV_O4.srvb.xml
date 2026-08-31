@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<srvb:ServiceBinding xmlns:srvb="http://www.sap.com/abapxml/srvb" Name="ZUI_PHARMASHIELD_GOV_O4" ServiceDefinition="ZUI_PHARMASHIELD_GOV">
+  <srvb:BindingTypeType>ODATA_V4</srvb:BindingTypeType>
+  <srvb:BindingCategory>WEB_API</srvb:BindingCategory>
+  <srvb:PublishedServiceGroup>ZUI_PHARMASHIELD_GOV_O4_0001</srvb:PublishedServiceGroup>
+</srvb:ServiceBinding>
