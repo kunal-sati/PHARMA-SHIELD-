@@ -12,17 +12,17 @@ import {
   AlertTriangle,
   Sliders,
   BarChart3,
-  Crown,
-  Lock,
-  Activity
+  Crown
 } from "lucide-react";
+import { useAppContext } from "@/components/AppProviders";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { selectedShipmentId } = useAppContext();
 
   const primaryNav = [
     { name: "Control Tower", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Shipment PS-1026", href: "/shipments/PS-1026", icon: Truck },
+    { name: `Shipment ${selectedShipmentId}`, href: `/shipments/${selectedShipmentId}`, icon: Truck },
     { name: "Incident Center", href: "/incidents", icon: AlertTriangle },
     { name: "AI Decision Center", href: "/decisions", icon: GitMerge },
     { name: "Approval Center", href: "/approvals", icon: CheckCircle2 },
@@ -33,8 +33,6 @@ export function Sidebar() {
     { name: "What-If Simulator", href: "/simulations", icon: Sliders },
     { name: "Fleet Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Executive Tower", href: "/executive", icon: Crown },
-    { name: "Security & Guards", href: "/security", icon: Lock },
-    { name: "System Health", href: "/system-health", icon: Activity },
   ];
 
   return (

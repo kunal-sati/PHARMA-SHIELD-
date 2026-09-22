@@ -13,12 +13,13 @@ import {
   UserCheck
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { useAppContext } from "@/components/AppProviders";
 
 export default function ApprovalsPage() {
   const [approvals, setApprovals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeRole, setActiveRole] = useState("MANAGER");
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const { role: activeRole, permissions } = useAppContext();
 
   const loadData = async () => {
     try {
@@ -33,18 +34,10 @@ export default function ApprovalsPage() {
 
   useEffect(() => {
     loadData();
-    const savedRole = localStorage.getItem("pharmashield_role") || "MANAGER";
-    setActiveRole(savedRole);
-
-    const handler = () => {
-      setActiveRole(localStorage.getItem("pharmashield_role") || "MANAGER");
-    };
-    window.addEventListener("pharmashield_role_change", handler);
-    return () => window.removeEventListener("pharmashield_role_change", handler);
   }, []);
 
   const handleApprove = async (approvalId: string, shipmentId: string) => {
-    if (activeRole !== "MANAGER" && activeRole !== "ADMIN") {
+    if (!permissions.canApprove) {
       alert(`FORBIDDEN: Approval requires role 'MANAGER' or 'ADMIN'. Your current role is '${activeRole}'.`);
       return;
     }
@@ -60,7 +53,7 @@ export default function ApprovalsPage() {
   };
 
   const handleReject = async (approvalId: string) => {
-    if (activeRole !== "MANAGER" && activeRole !== "ADMIN") {
+    if (!permissions.canApprove) {
       alert(`FORBIDDEN: Rejection requires role 'MANAGER' or 'ADMIN'. Your current role is '${activeRole}'.`);
       return;
     }
@@ -74,7 +67,7 @@ export default function ApprovalsPage() {
     }
   };
 
-  const canApprove = activeRole === "MANAGER" || activeRole === "ADMIN";
+  const canApprove = permissions.canApprove;
 
   return (
     <div className="space-y-6">
@@ -188,7 +181,9 @@ export default function ApprovalsPage() {
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   onClick={() => handleReject(app.id)}
-                  className="px-5 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs font-bold transition flex items-center gap-2"
+                  disabled={!canApprove}
+                  title={!canApprove ? "Manager or Admin approval permission required" : undefined}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 ${canApprove ? "bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10" : "bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700"}`}
                 >
                   <XCircle className="w-4 h-4 text-roseCritical" />
                   REJECT
@@ -196,6 +191,8 @@ export default function ApprovalsPage() {
 
                 <button
                   onClick={() => handleApprove(app.id, app.shipment_id)}
+                  disabled={!canApprove}
+                  title={!canApprove ? "Manager or Admin approval permission required" : undefined}
                   className={`px-6 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg ${
                     canApprove
                       ? "bg-emeraldSuccess hover:bg-emeraldSuccess/90 text-darkBg shadow-emeraldSuccess/20"

@@ -1,0 +1,45 @@
+managed implementation in class ZBP_I_PHARMASHIELD_SHIPMENT unique;
+strict ( 2 );
+
+define behavior for ZI_PHARMASHIELD_SHIPMENT alias Shipment
+persistent table zpharmashield_shp
+lock master
+authorization master ( instance )
+{
+  create;
+  update;
+  delete;
+
+  field ( readonly ) ShipmentID, CreatedAt, UpdatedAt;
+  field ( mandatory ) ProductName, Criticality, MinTemperature, MaxTemperature;
+
+  action ( features : instance ) validateRecommendation result [1] $self;
+  action ( features : instance ) approveAction result [1] $self;
+  action ( features : instance ) executeReroute result [1] $self;
+
+  mapping for zpharmashield_shp
+  {
+    ShipmentID = shipment_id;
+    OrganizationID = organization_id;
+    ProductID = product_id;
+    ProductName = product_name;
+    ProductType = product_type;
+    Origin = origin;
+    Destination = destination;
+    MinTemperature = min_temperature;
+    MaxTemperature = max_temperature;
+    Criticality = criticality;
+    QuantityUnits = quantity_units;
+    CurrentStatus = current_status;
+    CurrentTemperature = current_temperature;
+    CurrentLatitude = current_latitude;
+    CurrentLongitude = current_longitude;
+    DelayMinutes = delay_minutes;
+    TrafficLevel = traffic_level;
+    ProjectedRiskScore = projected_risk_score;
+    TimeToCriticalMinutes = time_to_critical_min;
+    ProductHealthPct = product_health_pct;
+    CreatedAt = created_at;
+    UpdatedAt = updated_at;
+  }
+}

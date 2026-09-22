@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sliders, Play, TrendingDown, DollarSign, Clock, ShieldCheck, AlertTriangle } from "lucide-react";
+import { useAppContext } from "@/components/AppProviders";
 
 export default function SimulationsPage() {
   const [selectedOption, setSelectedOption] = useState("REROUTE_TO_COLD_STORAGE");
@@ -15,15 +16,18 @@ export default function SimulationsPage() {
     recovery_probability_pct: 96.0,
     recommendation: "OPTIMAL (Immediate thermal stabilization at Depot #4)"
   });
+  const { selectedShipmentId, permissions } = useAppContext();
+  const canSimulate = permissions.canOperate;
 
   const handleSimulate = async (opt: string) => {
+    if (!canSimulate) return;
     setSelectedOption(opt);
     setLoading(true);
     try {
       const res = await fetch("http://localhost:8000/api/simulations/what-if", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shipment_id: "PS-1026", selected_option: opt })
+        body: JSON.stringify({ shipment_id: selectedShipmentId, selected_option: opt })
       });
       const data = await res.json();
       setResult(data);
@@ -44,7 +48,7 @@ export default function SimulationsPage() {
             What-If Scenario & Route Intelligence Simulator
           </h1>
           <p className="text-xs text-gray-400">
-            Compare hypothetical recovery routes, cost impact, and thermal preservation probability for <strong className="text-cyanAccent">PS-1026</strong>
+            Compare hypothetical recovery routes, cost impact, and thermal preservation probability for <strong className="text-cyanAccent">{selectedShipmentId}</strong>
           </p>
         </div>
         <span className="text-xs bg-amberWarning/20 text-amberWarning font-bold px-3 py-1 rounded border border-amberWarning/30">
@@ -56,6 +60,7 @@ export default function SimulationsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button
           onClick={() => handleSimulate("CONTINUE_ROUTE")}
+          disabled={!canSimulate || loading}
           className={`p-4 rounded-xl border text-left space-y-2 transition ${
             selectedOption === "CONTINUE_ROUTE"
               ? "bg-roseCritical/10 border-roseCritical shadow-lg shadow-roseCritical/10"
@@ -69,6 +74,7 @@ export default function SimulationsPage() {
 
         <button
           onClick={() => handleSimulate("REROUTE_TO_COLD_STORAGE")}
+          disabled={!canSimulate || loading}
           className={`p-4 rounded-xl border text-left space-y-2 transition ${
             selectedOption === "REROUTE_TO_COLD_STORAGE"
               ? "bg-cyanAccent/10 border-cyanAccent shadow-lg shadow-cyanAccent/10"
@@ -82,6 +88,7 @@ export default function SimulationsPage() {
 
         <button
           onClick={() => handleSimulate("REFRIGERATION_UNIT_REPLACEMENT")}
+          disabled={!canSimulate || loading}
           className={`p-4 rounded-xl border text-left space-y-2 transition ${
             selectedOption === "REFRIGERATION_UNIT_REPLACEMENT"
               ? "bg-amberWarning/10 border-amberWarning shadow-lg shadow-amberWarning/10"
@@ -93,6 +100,7 @@ export default function SimulationsPage() {
           <p className="text-xs text-gray-400">Dispatch mobile cooling swap unit to current highway location.</p>
         </button>
       </div>
+      {!canSimulate && <p className="text-xs text-amberWarning">Auditor access is read-only; simulation actions are unavailable.</p>}
 
       {/* Simulated Outcome Display */}
       {result && (

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Play, Flame, RefreshCw, CheckCircle, Zap } from "lucide-react";
 import { api } from "@/lib/api";
+import { useAppContext } from "@/components/AppProviders";
 
 interface SimulationControlsProps {
   onRefresh?: () => void;
@@ -11,8 +12,11 @@ interface SimulationControlsProps {
 export function SimulationControls({ onRefresh }: SimulationControlsProps) {
   const [loading, setLoading] = useState(false);
   const [lastAction, setLastAction] = useState<string | null>(null);
+  const { role, permissions } = useAppContext();
+  const canUseSimulation = permissions.canOperate;
 
   const handleRunExcursion = async () => {
+    if (!canUseSimulation) return;
     setLoading(true);
     try {
       await api.runVaccineDemo();
@@ -26,6 +30,7 @@ export function SimulationControls({ onRefresh }: SimulationControlsProps) {
   };
 
   const handleReset = async () => {
+    if (!permissions.canManageSimulation) return;
     setLoading(true);
     try {
       await api.resetDemo();
@@ -39,6 +44,7 @@ export function SimulationControls({ onRefresh }: SimulationControlsProps) {
   };
 
   const handleNormal = async () => {
+    if (!canUseSimulation) return;
     setLoading(true);
     try {
       await api.startSimulation("PS-1026");
@@ -78,7 +84,7 @@ export function SimulationControls({ onRefresh }: SimulationControlsProps) {
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={handleNormal}
-          disabled={loading}
+          disabled={loading || !canUseSimulation}
           className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 transition flex items-center gap-1.5"
         >
           <CheckCircle className="w-3.5 h-3.5 text-emeraldSuccess" />
@@ -87,7 +93,7 @@ export function SimulationControls({ onRefresh }: SimulationControlsProps) {
 
         <button
           onClick={handleRunExcursion}
-          disabled={loading}
+          disabled={loading || !canUseSimulation}
           className="px-4 py-2 text-xs font-bold rounded-lg bg-gradient-to-r from-roseCritical to-amberWarning text-white shadow-lg shadow-roseCritical/20 hover:opacity-95 transition flex items-center gap-2 disabled:opacity-50"
         >
           <Flame className="w-4 h-4 animate-bounce" />
@@ -96,13 +102,15 @@ export function SimulationControls({ onRefresh }: SimulationControlsProps) {
 
         <button
           onClick={handleReset}
-          disabled={loading}
+          disabled={loading || !permissions.canManageSimulation}
           className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 transition flex items-center gap-1.5"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-cyanAccent ${loading ? "animate-spin" : ""}`} />
           Reset Scenario
         </button>
       </div>
+      {!canUseSimulation && <p className="w-full text-right text-[10px] text-amberWarning">{role} is read-only. Operational controls are unavailable.</p>}
+      {canUseSimulation && !permissions.canManageSimulation && <p className="w-full text-right text-[10px] text-gray-400">Reset Scenario requires ADMIN permission.</p>}
     </div>
   );
 }

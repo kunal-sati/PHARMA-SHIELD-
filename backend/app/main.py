@@ -21,14 +21,13 @@ from backend.app.api import (
     incidents,
     analytics,
     simulations,
-    security_api,
-    health,
     master_data_api,
     pre_shipment_api,
     knowledge_api,
     policy_api,
     copilot_api,
-    notifications
+    notifications,
+    sap
 )
 
 @asynccontextmanager
@@ -74,14 +73,13 @@ app.include_router(audit.router, prefix="/api")
 app.include_router(incidents.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
 app.include_router(simulations.router, prefix="/api")
-app.include_router(security_api.router, prefix="/api")
-app.include_router(health.router, prefix="/api")
 app.include_router(master_data_api.router, prefix="/api")
 app.include_router(pre_shipment_api.router, prefix="/api")
 app.include_router(knowledge_api.router, prefix="/api")
 app.include_router(policy_api.router, prefix="/api")
 app.include_router(copilot_api.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
+app.include_router(sap.router, prefix="/api")
 app.include_router(demo.router, prefix="/api")
 app.include_router(websockets.router)
 

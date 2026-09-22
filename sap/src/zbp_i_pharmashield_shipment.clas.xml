@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+ <asx:values>
+  <VSEOCLASS>
+   <CLSNAME>ZBP_I_PHARMASHIELD_SHIPMENT</CLSNAME>
+   <LANGU>E</LANGU>
+   <DESCRIPT>Behavior Implementation for ZI_PHARMASHIELD_SHIPMENT</DESCRIPT>
+   <STATE>1</STATE>
+   <CLSCCINCL>X</CLSCCINCL>
+   <FIXPT>X</FIXPT>
+   <UNICODE>X</UNICODE>
+   <ABAP_LANGUAGE_VERSION>5</ABAP_LANGUAGE_VERSION>
+  </VSEOCLASS>
+ </asx:values>
+</asx:abap>

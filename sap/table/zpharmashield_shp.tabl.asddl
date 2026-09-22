@@ -1,0 +1,32 @@
+@EndUserText.label : 'PharmaShield Cold Chain Shipment Persistent Table'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table zpharmashield_shp {
+  key client            : abap.clnt not null;
+  key shipment_id       : abap.char(32) not null;
+  organization_id       : abap.char(32);
+  product_id            : abap.char(32);
+  product_name          : abap.char(100);
+  product_type          : abap.char(50);
+  origin                : abap.char(100);
+  destination           : abap.char(100);
+  @Semantics.quantity.unitOfMeasure : 'zpharmashield_shp.quantity_units'
+  min_temperature       : abap.dec(5,2);
+  @Semantics.quantity.unitOfMeasure : 'zpharmashield_shp.quantity_units'
+  max_temperature       : abap.dec(5,2);
+  criticality           : abap.char(10);
+  quantity_units        : abap.unit(3);
+  current_status        : abap.char(30);
+  current_temperature   : abap.dec(5,2);
+  current_latitude      : abap.dec(10,6);
+  current_longitude     : abap.dec(10,6);
+  delay_minutes         : abap.int4;
+  traffic_level         : abap.char(20);
+  projected_risk_score  : abap.int4;
+  time_to_critical_min  : abap.int4;
+  product_health_pct    : abap.int4;
+  created_at            : abap.utclong;
+  updated_at            : abap.utclong;
+}

@@ -1,0 +1,4 @@
+@EndUserText.label: 'PharmaShield Cold Chain Governance Service Definition'
+define service ZUI_PHARMASHIELD_GOV {
+  expose ZI_PHARMASHIELD_SHIPMENT as Shipment;
+}

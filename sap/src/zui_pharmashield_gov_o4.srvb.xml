@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+ <asx:values>
+  <SRVB>
+   <SRVBNAME>ZUI_PHARMASHIELD_GOV_O4</SRVBNAME>
+   <BINDING_TYPE>ODATA_V4</BINDING_TYPE>
+   <BINDING_CATEGORY>WEB_API</BINDING_CATEGORY>
+   <SRVD_NAME>ZUI_PHARMASHIELD_GOV</SRVD_NAME>
+   <ABAP_LANGUAGE_VERSION>5</ABAP_LANGUAGE_VERSION>
+  </SRVB>
+ </asx:values>
+</asx:abap>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+ <asx:values>
+  <DDLS>
+   <STRUC_TYPE>V</STRUC_TYPE>
+   <ABAP_LANGUAGE_VERSION>5</ABAP_LANGUAGE_VERSION>
+  </DDLS>
+ </asx:values>
+</asx:abap>

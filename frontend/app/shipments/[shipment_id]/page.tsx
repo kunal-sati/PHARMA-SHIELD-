@@ -25,11 +25,13 @@ import {
 } from "recharts";
 import { api } from "@/lib/api";
 import { ShipmentMap } from "@/components/ShipmentMap";
+import { useAppContext } from "@/components/AppProviders";
 
 export default function ShipmentDetailPage({ params }: { params: { shipment_id: string } }) {
   const [shipment, setShipment] = useState<any>(null);
   const [readings, setReadings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { selectShipment } = useAppContext();
 
   const loadData = async () => {
     try {
@@ -45,6 +47,7 @@ export default function ShipmentDetailPage({ params }: { params: { shipment_id: 
   };
 
   useEffect(() => {
+    selectShipment(params.shipment_id);
     loadData();
     const interval = setInterval(loadData, 3000);
     return () => clearInterval(interval);
@@ -62,6 +65,10 @@ export default function ShipmentDetailPage({ params }: { params: { shipment_id: 
   }));
 
   const isExcursion = shipment.current_temperature > shipment.max_temperature || shipment.current_temperature < shipment.min_temperature;
+  const temperatureDomain = [
+    Math.min(shipment.min_temperature, shipment.current_temperature, ...readings.map((item) => item.temperature)) - 2,
+    Math.max(shipment.max_temperature, shipment.current_temperature, ...readings.map((item) => item.temperature)) + 2,
+  ];
 
   return (
     <div className="space-y-6">
@@ -147,9 +154,9 @@ export default function ShipmentDetailPage({ params }: { params: { shipment_id: 
                 <TrendingUp className="w-4 h-4 text-cyanAccent" />
                 Realtime Thermal Telemetry Stream
               </h3>
-              <p className="text-xs text-gray-400">Threshold upper boundary set at 8.0°C</p>
+              <p className="text-xs text-gray-400">Safe range: {shipment.min_temperature}°C to {shipment.max_temperature}°C</p>
             </div>
-            <span className="text-xs font-mono bg-white/5 text-gray-300 px-2 py-1 rounded">2°C–8°C Corridor</span>
+            <span className="text-xs font-mono bg-white/5 text-gray-300 px-2 py-1 rounded">{shipment.min_temperature}°C–{shipment.max_temperature}°C Corridor</span>
           </div>
 
           <div className="h-64 w-full">
@@ -157,12 +164,12 @@ export default function ShipmentDetailPage({ params }: { params: { shipment_id: 
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
                 <XAxis dataKey="time" stroke="#9CA3AF" tick={{ fontSize: 11 }} />
-                <YAxis domain={[0, 12]} stroke="#9CA3AF" tick={{ fontSize: 11 }} />
+                <YAxis domain={temperatureDomain} stroke="#9CA3AF" tick={{ fontSize: 11 }} />
                 <Tooltip
                   contentStyle={{ backgroundColor: "#111827", borderColor: "#1F2937", borderRadius: "8px", color: "#FFF" }}
                 />
-                <ReferenceLine y={8.0} label={{ value: "Max 8.0°C", fill: "#EF4444", fontSize: 11 }} stroke="#EF4444" strokeDasharray="4 4" />
-                <ReferenceLine y={2.0} label={{ value: "Min 2.0°C", fill: "#10B981", fontSize: 11 }} stroke="#10B981" strokeDasharray="4 4" />
+                <ReferenceLine y={shipment.max_temperature} label={{ value: `Max ${shipment.max_temperature}°C`, fill: "#EF4444", fontSize: 11 }} stroke="#EF4444" strokeDasharray="4 4" />
+                <ReferenceLine y={shipment.min_temperature} label={{ value: `Min ${shipment.min_temperature}°C`, fill: "#10B981", fontSize: 11 }} stroke="#10B981" strokeDasharray="4 4" />
                 <Line
                   type="monotone"
                   dataKey="temperature"

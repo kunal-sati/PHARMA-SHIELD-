@@ -15,10 +15,12 @@ import {
 import { api } from "@/lib/api";
 import { SimulationControls } from "@/components/SimulationControls";
 import { ShipmentMap } from "@/components/ShipmentMap";
+import { useAppContext } from "@/components/AppProviders";
 
 export default function DashboardPage() {
   const [shipments, setShipments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { selectedShipmentId, selectShipment } = useAppContext();
 
   const loadData = async () => {
     try {
@@ -43,7 +45,8 @@ export default function DashboardPage() {
   const critical = shipments.filter(s => s.current_status === "CRITICAL" || s.current_status === "AWAITING_APPROVAL").length;
   const recovered = shipments.filter(s => s.current_status === "RECOVERED").length;
 
-  const targetShipment = shipments.find(s => s.shipment_id === "PS-1026") || shipments[0];
+  const targetShipment = shipments.find(s => s.shipment_id === selectedShipmentId) || shipments[0];
+  const selectedId = targetShipment?.shipment_id || selectedShipmentId;
 
   return (
     <div className="space-y-6">
@@ -110,10 +113,10 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-white">Live Cold Chain Route Monitor</h3>
-              <p className="text-xs text-gray-400">Active IoT Telemetry Feed — Delhi to Chandigarh</p>
+              <p className="text-xs text-gray-400">Active IoT Telemetry Feed — {targetShipment ? `${targetShipment.origin} to ${targetShipment.destination}` : "loading"}</p>
             </div>
             <Link
-              href="/shipments/PS-1026"
+              href={`/shipments/${selectedId}`}
               className="text-xs text-cyanAccent hover:underline flex items-center gap-1 font-semibold"
             >
               Inspect Telemetry <ArrowRight className="w-3.5 h-3.5" />
@@ -145,17 +148,17 @@ export default function DashboardPage() {
             <div className="mt-4 space-y-3">
               <div className="p-3.5 rounded-lg bg-roseCritical/10 border border-roseCritical/30 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">Shipment PS-1026</span>
+                  <span className="text-xs font-bold text-white">Shipment {selectedId}</span>
                   <span className="text-[10px] bg-roseCritical text-white font-bold px-1.5 py-0.5 rounded">
-                    CRITICAL
+                    {targetShipment?.current_status || "MONITORING"}
                   </span>
                 </div>
                 <p className="text-xs text-roseCritical font-semibold">
-                  Temperature Excursion: {targetShipment?.current_temperature || 9.6}°C (Limit: 2°C–8°C)
+                  Temperature: {targetShipment?.current_temperature ?? "--"}°C (Safe: {targetShipment?.min_temperature ?? "--"}°C–{targetShipment?.max_temperature ?? "--"}°C)
                 </p>
                 <div className="text-[11px] text-gray-400 flex items-center justify-between">
-                  <span>Product: Vaccine (High Crit)</span>
-                  <span>Delay: {targetShipment?.delay_minutes || 47}m</span>
+                  <span>Product: {targetShipment?.product_type || "--"} ({targetShipment?.criticality || "--"})</span>
+                  <span>Delay: {targetShipment?.delay_minutes ?? "--"}m</span>
                 </div>
                 <div className="pt-2 border-t border-roseCritical/20 flex items-center justify-between">
                   <span className="text-[10px] text-gray-400 font-mono">Risk Score: 91/100</span>
@@ -216,7 +219,7 @@ export default function DashboardPage() {
               {shipments.map((s) => {
                 const isExcursion = s.current_temperature > s.max_temperature || s.current_temperature < s.min_temperature;
                 return (
-                  <tr key={s.shipment_id} className="hover:bg-white/5 transition">
+                  <tr key={s.shipment_id} className={`hover:bg-white/5 transition ${s.shipment_id === selectedId ? "bg-cyanAccent/5" : ""}`}>
                     <td className="py-3.5 px-4 font-bold text-white font-mono">{s.shipment_id}</td>
                     <td className="py-3.5 px-4">
                       <div>
@@ -248,6 +251,7 @@ export default function DashboardPage() {
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/shipments/${s.shipment_id}`}
+                        onClick={() => selectShipment(s.shipment_id)}
                         className="px-3 py-1.5 rounded text-xs font-semibold bg-white/5 hover:bg-white/10 text-cyanAccent border border-cyanAccent/30 transition inline-flex items-center gap-1"
                       >
                         Inspect <ArrowRight className="w-3 h-3" />

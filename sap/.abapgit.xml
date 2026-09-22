@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+ <asx:values>
+  <DATA>
+   <START_DIR>/src/</START_DIR>
+   <VERSION>1.00.0</VERSION>
+   <FOLDER_LOGIC>PREFIX</FOLDER_LOGIC>
+   <EXPAND_ABAPGITXML>true</EXPAND_ABAPGITXML>
+   <REQ_APP_VERSION>750</REQ_APP_VERSION>
+   <ABAP_LANGUAGE_VERSION>5</ABAP_LANGUAGE_VERSION>
+  </DATA>
+ </asx:values>
+</asx:abap>

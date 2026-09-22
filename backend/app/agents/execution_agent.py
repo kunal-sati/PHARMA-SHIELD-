@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from backend.app.core.state_machine import ShipmentStateMachine, ShipmentState
-from backend.app.integrations.sap_governance import sap_governance
+from backend.app.integrations.sap_governance import get_sap_governance_service
 
 class ExecutionAgent:
     """
@@ -16,8 +16,9 @@ class ExecutionAgent:
         shipment_id: str
     ) -> Dict[str, Any]:
         
-        # 1. Verify SAP rule 5 (Approval verification)
-        is_permitted = sap_governance.verify_execution_permitted(approval_status, action)
+        # 1. Verify SAP rule 5 (Approval verification) via authoritative SAP governance service
+        sap_service = get_sap_governance_service()
+        is_permitted = sap_service.verify_execution_permitted(approval_status, action)
         if not is_permitted:
             raise PermissionError(
                 f"Execution Prohibited by SAP Governance: Action '{action}' requires approval_status='APPROVED'. Current status is '{approval_status}'."

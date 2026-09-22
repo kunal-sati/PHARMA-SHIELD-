@@ -13,12 +13,18 @@ import {
   Flame 
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { useAppContext } from "@/components/AppProviders";
 
 export default function AuditPage() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [shipmentFilter, setShipmentFilter] = useState("PS-1026");
   const [actorFilter, setActorFilter] = useState("ALL");
+  const { selectedShipmentId } = useAppContext();
+
+  useEffect(() => {
+    setShipmentFilter(selectedShipmentId);
+  }, [selectedShipmentId]);
 
   const loadData = async () => {
     try {
@@ -69,6 +75,7 @@ export default function AuditPage() {
               <option value="PS-1026">PS-1026 (Vaccine Demo)</option>
               <option value="PS-1025">PS-1025</option>
               <option value="PS-1024">PS-1024</option>
+              <option value="PS-1023">PS-1023 (Cryo Plasma)</option>
             </select>
           </div>
 

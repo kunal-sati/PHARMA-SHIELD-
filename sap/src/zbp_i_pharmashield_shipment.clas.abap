@@ -1,0 +1,13 @@
+CLASS zbp_i_pharmashield_shipment DEFINITION
+  PUBLIC
+  ABSTRACT
+  FINAL
+  FOR BEHAVIOR OF zi_pharmashield_shipment .
+
+  PUBLIC SECTION.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zbp_i_pharmashield_shipment IMPLEMENTATION.
+ENDCLASS.
